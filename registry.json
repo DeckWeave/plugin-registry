@@ -1,4 +1,5 @@
 {
+  "$schema": "./schema/registry.schema.json",
   "schemaVersion": 1,
   "plugins": [
     {
@@ -6,10 +7,59 @@
       "name": "DeckWeave Weather",
       "version": "0.1.0",
       "license": "GPL-3.0-or-later",
-      "source": { "kind": "workspace", "path": "../deckweave/plugins/dev.deckweave.weather.sdPlugin" },
+      "source": {
+        "kind": "workspace",
+        "path": "../deckweave/plugins/dev.deckweave.weather.sdPlugin"
+      },
       "controllers": ["Keypad", "Panel"],
+      "platforms": ["windows"],
       "optional": true,
-      "description": "Погода Open-Meteo: выбор города, текущие условия, прогноз, ощущения и закат."
+      "description": "Open-Meteo weather with explicit city selection, current conditions and forecast. No IP geolocation."
+    },
+    {
+      "id": "dev.deckweave.audio",
+      "name": "DeckWeave Audio",
+      "version": "0.1.0",
+      "license": "GPL-3.0-or-later",
+      "source": {
+        "kind": "workspace",
+        "path": "../deckweave/plugins/dev.deckweave.audio.sdPlugin"
+      },
+      "controllers": ["Keypad", "Encoder", "Panel"],
+      "platforms": ["windows"],
+      "optional": true,
+      "description": "Windows default-output volume, mute and touch control with observed system state. Requires a native helper in distribution archives.",
+      "requiredFiles": [
+        { "path": "bin/deckweave-system.exe", "platforms": ["windows"] }
+      ]
+    },
+    {
+      "id": "dev.deckweave.monitor",
+      "name": "System Monitor",
+      "version": "0.1.0",
+      "license": "GPL-3.0-or-later",
+      "source": {
+        "kind": "workspace",
+        "path": "../deckweave/plugins/dev.deckweave.monitor.sdPlugin"
+      },
+      "controllers": ["Keypad", "Encoder", "Panel"],
+      "platforms": ["windows"],
+      "optional": true,
+      "description": "Local CPU, memory and uptime widgets. No network requests."
+    },
+    {
+      "id": "dev.deckweave.timers",
+      "name": "Timers",
+      "version": "0.1.0",
+      "license": "GPL-3.0-or-later",
+      "source": {
+        "kind": "workspace",
+        "path": "../deckweave/plugins/dev.deckweave.timers.sdPlugin"
+      },
+      "controllers": ["Keypad", "Encoder", "Panel"],
+      "platforms": ["windows"],
+      "optional": true,
+      "description": "Countdown/focus timer and stopwatch with key, dial and native Panel controls."
     }
   ]
 }

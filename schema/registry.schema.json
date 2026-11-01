@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DeckWeave optional action plugin registry v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "plugins"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "plugins": { "type": "array", "items": { "$ref": "#/$defs/plugin" } }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:\\.[a-z][a-z0-9_-]*){2,}$"
+    },
+    "platforms": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "enum": ["windows", "macos", "linux"] }
+    },
+    "relativeFile": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.\\.?(?:/|$))[^/:\\x00-\\x1f]+(?:/[^/:\\x00-\\x1f]+)*$"
+    },
+    "workspace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "path"],
+      "properties": {
+        "kind": { "const": "workspace" },
+        "path": {
+          "type": "string",
+          "pattern": "^\\.\\./deckweave/plugins/[a-z][a-z0-9]*(?:\\.[a-z][a-z0-9_-]*){2,}\\.sdPlugin$"
+        }
+      }
+    },
+    "archive": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "url", "sha256"],
+      "properties": {
+        "kind": { "const": "archive" },
+        "url": {
+          "type": "string",
+          "pattern": "^https://[^/?#\\s]+/[^?#\\s]+\\.zip$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^(?!([0-9a-f])\\1{63}$)[0-9a-f]{64}$"
+        }
+      }
+    },
+    "plugin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "version",
+        "license",
+        "description",
+        "source",
+        "controllers",
+        "platforms",
+        "optional"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+(?:[-+][a-zA-Z0-9.-]+)?$"
+        },
+        "license": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9.+-]+$"
+        },
+        "description": { "type": "string", "minLength": 1, "maxLength": 2000 },
+        "source": {
+          "oneOf": [
+            { "$ref": "#/$defs/workspace" },
+            { "$ref": "#/$defs/archive" }
+          ]
+        },
+        "controllers": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": ["Keypad", "Encoder", "Panel"] }
+        },
+        "platforms": { "$ref": "#/$defs/platforms" },
+        "optional": { "const": true },
+        "requiredFiles": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "platforms"],
+            "properties": {
+              "path": { "$ref": "#/$defs/relativeFile" },
+              "platforms": { "$ref": "#/$defs/platforms" }
+            }
+          }
+        }
+      }
+    }
+  }
+}
