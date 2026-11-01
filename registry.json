@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "plugins": [
+    {
+      "id": "dev.deckweave.weather",
+      "name": "DeckWeave Weather",
+      "version": "0.1.0",
+      "license": "GPL-3.0-or-later",
+      "source": { "kind": "workspace", "path": "../deckweave/plugins/dev.deckweave.weather.sdPlugin" },
+      "controllers": ["Keypad", "Panel"],
+      "optional": true,
+      "description": "Погода Open-Meteo: выбор города, текущие условия, прогноз, ощущения и закат."
+    }
+  ]
+}
