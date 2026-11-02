@@ -1,5 +1,13 @@
 # Contributing a plugin entry
 
+New entries use registry format 2 and explicit `type:"action"` or `type:"device"`.
+Device support has independent `deviceProtocol`, model IDs, provisional stability,
+`.dwDevice` manifest validation and reviewed workspace boundaries; do not copy
+action `controllers` into a device entry. Legacy format 1 stays action-only.
+Keep the vendored device manifest schema aligned with plugin-sdk. Development
+workspace entries and local release metadata are never public downloads. Native
+source redistribution permission must be resolved before adding a public archive.
+
 1. Create the plugin from the sibling `plugin-template` or provide a complete reviewed bundle. Use your own reverse-DNS namespace and unique action UUIDs. Describe what key, dial and Panel input does; support only controllers actually implemented.
 2. Document settings, background work, network endpoints/data disclosure, native helpers, platform limitations, errors, cancellation and licensing in the plugin README. Keep all required source/notices with GPL distributions. Do not copy third-party installed Elgato packages into this repository.
 3. Add an optional entry with the actual version, manifest name and controller union. Current workspace entries are confined to the sibling application's plugins directory. Do not add empty icon packs or internal testing fixtures as useful plugins.

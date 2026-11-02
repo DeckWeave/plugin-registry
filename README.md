@@ -1,8 +1,21 @@
 # DeckWeave optional plugin registry
 
-A small, validated metadata catalog for optional action plugins. It contains **Weather, Audio, System Monitor and Timers**, all GPL-3.0-or-later. Current entries point to the sibling application source checkout; no remote release URLs or downloadable releases are invented. Third-party Elgato packages and empty icon packs are not redistributed here.
+A validated **typed extension** catalogue: Weather, Audio, System Monitor and
+Timers actions, plus a development-only two-instance mock device provider. Current
+entries use sibling source checkouts; no remote releases are invented. Third-party
+Elgato packages and empty icon packs are not redistributed here.
 
-This is **not an installer or Marketplace**. The tools read JSON and local files; they never download, run a plugin, install dependencies or modify application settings. The development host currently discovers `deckweave/plugins` directly. Changing this registry does not install or enable a plugin in the app.
+Registry format **2** requires `type: "action"` or `type: "device"`. Legacy v1
+action metadata remains accepted by the validator. Device entries have independent
+`deviceProtocol`, `models` and `provisional:true`; action `controllers` cannot be
+mixed into a device entry. Protocol 1 device manifests support bundled Node or
+native entries; this does not alter Elgato action compatibility.
+
+This repository supplies metadata and validation. Its tools never download, run
+extensions, install dependencies or modify application settings. The application
+has its own managed-install preview and scans action `plugins` and device
+`device-plugins` sources. Changing this registry alone does not install or enable
+an extension in the application.
 
 ## Quick start
 
@@ -24,15 +37,23 @@ node bin/registry.mjs validate --packaging
 
 `npm test` uses its own temporary fixtures; their backends deliberately throw if executed, so successful validation cannot rely on running a plugin. CI runs tests and metadata validation on Windows and Linux with Node 22. Actual host/device support is currently listed as Windows; schema also allows macOS/Linux for future verified releases. Local checks on this machine used Node 26; CI is configured for Node 22, not claimed to have run remotely.
 
-По-русски: `npm run validate` проверяет только реестр. `npm run validate:workspace` дополнительно проверяет плагины из соседнего `deckweave/plugins`. Перед распространением используйте `node bin/registry.mjs validate --packaging`: отсутствие обязательного нативного файла остановит проверку.
+По-русски: `npm run validate` проверяет только реестр. `npm run validate:workspace` дополнительно проверяет action-пакеты из соседнего `deckweave/plugins` и device-примеры из `plugin-template/examples`. Перед распространением используйте `node bin/registry.mjs validate --packaging`: отсутствие обязательного нативного файла остановит проверку.
 
 ## Entry contract
 
-See [registry.json](registry.json), [JSON Schema](schema/registry.schema.json) and [contribution guide](CONTRIBUTING.md). Fields are explicit: reverse-DNS `id`, display `name`, concrete `version`, license identifier, description, controllers, supported platforms, `optional:true`, and exactly one source shape. IDs are unique across the registry. Platform/controller arrays cannot be empty or duplicated. Unknown fields fail validation so typos do not silently change meaning. License strings have SPDX identifier syntax; maintainers must still verify the actual license and bundled notices.
+See [registry.json](registry.json), [JSON Schema](schema/registry.schema.json) and [contribution guide](CONTRIBUTING.md). Shared fields are reverse-DNS `id`, display `name`, concrete `version`, license identifier, description, supported platforms, `optional:true`, and exactly one source shape. Actions require nonempty unique `controllers`; device support requires its protocol, model IDs and provisional stability instead. IDs are unique across the registry. Platform/model arrays cannot be empty or duplicated. Unknown fields fail validation so typos do not silently change meaning. Licence strings have SPDX identifier syntax; maintainers must still verify the actual licence and bundled notices.
 
 ### Development workspace source
 
-`source.kind` is `workspace`; `source.path` must be exactly `../deckweave/plugins/<id>.sdPlugin`. Only this reviewed sibling boundary is allowed; arbitrary `..`, absolute paths, alternate drives and symlink escapes are rejected. Workspace references are development-only and should not be presented as remotely installable entries.
+`source.kind` is `workspace`; action paths must be exactly
+`../deckweave/plugins/<id>.sdPlugin`. The mock device path is exactly
+`../plugin-template/examples/<id>.dwDevice`. Only these reviewed boundaries are
+allowed; arbitrary `..`, absolute paths, alternate drives and symlink escapes are
+rejected. Workspace entries are development-only and must never be presented as
+public downloadable releases. Device checks inspect `deckweave.device.json`,
+kind/protocol/models/platforms and bundled executable containment without running
+the provider. Local mock packaging produces ZIP, SHA-256 and a
+`developmentOnly:true` release metadata file, with no download URL/publication.
 
 ### Published archive source
 

@@ -1,14 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "DeckWeave optional action plugin registry v1",
-  "type": "object",
-  "additionalProperties": false,
-  "required": ["schemaVersion", "plugins"],
-  "properties": {
-    "$schema": { "type": "string" },
-    "schemaVersion": { "const": 1 },
-    "plugins": { "type": "array", "items": { "$ref": "#/$defs/plugin" } }
-  },
+  "title": "DeckWeave typed extension registry v2 (legacy v1 accepted)",
   "$defs": {
     "id": {
       "type": "string",
@@ -18,7 +10,9 @@
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "items": { "enum": ["windows", "macos", "linux"] }
+      "items": {
+        "enum": ["windows", "macos", "linux"]
+      }
     },
     "relativeFile": {
       "type": "string",
@@ -29,7 +23,9 @@
       "additionalProperties": false,
       "required": ["kind", "path"],
       "properties": {
-        "kind": { "const": "workspace" },
+        "kind": {
+          "const": "workspace"
+        },
         "path": {
           "type": "string",
           "pattern": "^\\.\\./deckweave/plugins/[a-z][a-z0-9]*(?:\\.[a-z][a-z0-9_-]*){2,}\\.sdPlugin$"
@@ -41,7 +37,9 @@
       "additionalProperties": false,
       "required": ["kind", "url", "sha256"],
       "properties": {
-        "kind": { "const": "archive" },
+        "kind": {
+          "const": "archive"
+        },
         "url": {
           "type": "string",
           "pattern": "^https://[^/?#\\s]+/[^?#\\s]+\\.zip$"
@@ -53,6 +51,16 @@
       }
     },
     "plugin": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/actionPlugin"
+        },
+        {
+          "$ref": "#/$defs/devicePlugin"
+        }
+      ]
+    },
+    "legacyPlugin": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -67,8 +75,14 @@
         "optional"
       ],
       "properties": {
-        "id": { "$ref": "#/$defs/id" },
-        "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
         "version": {
           "type": "string",
           "pattern": "^\\d+\\.\\d+\\.\\d+(?:[-+][a-zA-Z0-9.-]+)?$"
@@ -77,21 +91,35 @@
           "type": "string",
           "pattern": "^[A-Za-z0-9][A-Za-z0-9.+-]+$"
         },
-        "description": { "type": "string", "minLength": 1, "maxLength": 2000 },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
         "source": {
           "oneOf": [
-            { "$ref": "#/$defs/workspace" },
-            { "$ref": "#/$defs/archive" }
+            {
+              "$ref": "#/$defs/workspace"
+            },
+            {
+              "$ref": "#/$defs/archive"
+            }
           ]
         },
         "controllers": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "enum": ["Keypad", "Encoder", "Panel"] }
+          "items": {
+            "enum": ["Keypad", "Encoder", "Panel"]
+          }
         },
-        "platforms": { "$ref": "#/$defs/platforms" },
-        "optional": { "const": true },
+        "platforms": {
+          "$ref": "#/$defs/platforms"
+        },
+        "optional": {
+          "const": true
+        },
         "requiredFiles": {
           "type": "array",
           "minItems": 1,
@@ -100,12 +128,244 @@
             "additionalProperties": false,
             "required": ["path", "platforms"],
             "properties": {
-              "path": { "$ref": "#/$defs/relativeFile" },
-              "platforms": { "$ref": "#/$defs/platforms" }
+              "path": {
+                "$ref": "#/$defs/relativeFile"
+              },
+              "platforms": {
+                "$ref": "#/$defs/platforms"
+              }
             }
           }
         }
       }
+    },
+    "actionPlugin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "version",
+        "license",
+        "description",
+        "source",
+        "controllers",
+        "platforms",
+        "optional",
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+(?:[-+][a-zA-Z0-9.-]+)?$"
+        },
+        "license": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9.+-]+$"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "source": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/workspace"
+            },
+            {
+              "$ref": "#/$defs/archive"
+            }
+          ]
+        },
+        "controllers": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": ["Keypad", "Encoder", "Panel"]
+          }
+        },
+        "platforms": {
+          "$ref": "#/$defs/platforms"
+        },
+        "optional": {
+          "const": true
+        },
+        "requiredFiles": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "platforms"],
+            "properties": {
+              "path": {
+                "$ref": "#/$defs/relativeFile"
+              },
+              "platforms": {
+                "$ref": "#/$defs/platforms"
+              }
+            }
+          }
+        },
+        "type": {
+          "const": "action"
+        }
+      }
+    },
+    "deviceWorkspace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "path"],
+      "properties": {
+        "kind": {
+          "const": "workspace"
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^\\.\\./plugin-template/examples/[a-z][a-z0-9]*(?:\\.[a-z][a-z0-9_-]*){2,}\\.dwDevice$"
+        }
+      }
+    },
+    "devicePlugin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "version",
+        "license",
+        "description",
+        "source",
+        "platforms",
+        "optional",
+        "type",
+        "deviceProtocol",
+        "provisional",
+        "models"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+(?:[-+][a-zA-Z0-9.-]+)?$"
+        },
+        "license": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9.+-]+$"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "source": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/deviceWorkspace"
+            },
+            {
+              "$ref": "#/$defs/archive"
+            }
+          ]
+        },
+        "platforms": {
+          "$ref": "#/$defs/platforms"
+        },
+        "optional": {
+          "const": true
+        },
+        "requiredFiles": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "platforms"],
+            "properties": {
+              "path": {
+                "$ref": "#/$defs/relativeFile"
+              },
+              "platforms": {
+                "$ref": "#/$defs/platforms"
+              }
+            }
+          }
+        },
+        "type": {
+          "const": "device"
+        },
+        "deviceProtocol": {
+          "const": 1
+        },
+        "provisional": {
+          "const": true
+        },
+        "models": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        }
+      }
     }
-  }
+  },
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "plugins"],
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "schemaVersion": {
+          "const": 1
+        },
+        "plugins": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/legacyPlugin"
+          }
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "plugins"],
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "schemaVersion": {
+          "const": 2
+        },
+        "plugins": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/plugin"
+          }
+        }
+      }
+    }
+  ]
 }

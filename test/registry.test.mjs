@@ -43,7 +43,9 @@ test("checked-in metadata validates without sibling repositories", async () => {
     await readFile(path.join(root, "registry.json"), "utf8"),
   );
   assert.deepEqual(metadataErrors(data), []);
-  assert.equal(data.plugins.length, 4);
+  assert.equal(data.schemaVersion, 2);
+  assert.equal(data.plugins.filter((p) => p.type === "action").length, 4);
+  assert.equal(data.plugins.filter((p) => p.type === "device").length, 1);
   const audio = data.plugins.find((p) => p.id === "dev.deckweave.audio");
   assert.ok(
     audio.requiredFiles.some((f) => f.path === "bin/deckweave-system.exe"),

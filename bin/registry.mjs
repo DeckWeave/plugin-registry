@@ -7,6 +7,9 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 export const schema = JSON.parse(
   await readFile(path.join(root, "schema/registry.schema.json"), "utf8"),
 );
+const deviceManifestSchema = JSON.parse(
+  await readFile(path.join(root, "schema/device-manifest.schema.json"), "utf8"),
+);
 
 // Implements only the schema vocabulary used by the checked-in schema, not general JSON Schema.
 export function schemaErrors(value, rule = schema, location = "$") {
@@ -89,7 +92,10 @@ export function metadataErrors(registry) {
       errors.push(`${prefix}: name/description cannot be whitespace`);
     if (
       entry.source.kind === "workspace" &&
-      entry.source.path !== `../deckweave/plugins/${entry.id}.sdPlugin`
+      entry.source.path !==
+        (entry.type === "device"
+          ? `../plugin-template/examples/${entry.id}.dwDevice`
+          : `../deckweave/plugins/${entry.id}.sdPlugin`)
     )
       errors.push(`${prefix}: workspace path must match the plugin ID`);
     if (entry.source.kind === "archive") {
@@ -173,14 +179,57 @@ export async function validateRegistry(
     }
     try {
       const allowed = await realpath(
-        path.resolve(directory, "../deckweave/plugins"),
+        path.resolve(
+          directory,
+          entry.type === "device"
+            ? "../plugin-template/examples"
+            : "../deckweave/plugins",
+        ),
       );
       const bundle = await realpath(path.resolve(directory, entry.source.path));
       if (
         !within(allowed, bundle) ||
-        path.basename(bundle) !== `${entry.id}.sdPlugin`
+        path.basename(bundle) !==
+          `${entry.id}.${entry.type === "device" ? "dwDevice" : "sdPlugin"}`
       )
         throw new Error("workspace path escapes allowed plugin directory");
+      if (entry.type === "device") {
+        const device = JSON.parse(
+          await readFile(
+            await fileInside(bundle, "deckweave.device.json"),
+            "utf8",
+          ),
+        );
+        const manifestErrors = schemaErrors(device, deviceManifestSchema);
+        if (manifestErrors.length)
+          throw new Error(
+            "invalid device manifest: " + manifestErrors.join("; "),
+          );
+        if (
+          device.kind !== "device" ||
+          device.protocol !== entry.deviceProtocol ||
+          device.id !== entry.id ||
+          device.version !== entry.version ||
+          device.name !== entry.name ||
+          !["node", "native"].includes(device.runtime)
+        )
+          throw new Error("device manifest metadata/protocol mismatch");
+        if (
+          !Array.isArray(device.platforms) ||
+          [...device.platforms].sort().join() !==
+            [...entry.platforms].sort().join()
+        )
+          throw new Error("device manifest platforms mismatch");
+        if (
+          !Array.isArray(device.models) ||
+          [...device.models].sort().join() !== [...entry.models].sort().join()
+        )
+          throw new Error("device manifest models mismatch");
+        await fileInside(bundle, device.entry);
+        for (const file of entry.requiredFiles ?? [])
+          await fileInside(bundle, file.path);
+        continue;
+      }
       const manifest = JSON.parse(
         await readFile(await fileInside(bundle, "manifest.json"), "utf8"),
       );
