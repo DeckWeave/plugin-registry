@@ -12,8 +12,13 @@
         "kind": "workspace",
         "path": "../deckweave/plugins/dev.deckweave.weather.sdPlugin"
       },
-      "controllers": ["Keypad", "Panel"],
-      "platforms": ["windows"],
+      "controllers": [
+        "Keypad",
+        "Panel"
+      ],
+      "platforms": [
+        "windows"
+      ],
       "optional": true,
       "description": "Open-Meteo weather with explicit city selection, current conditions and forecast. No IP geolocation."
     },
@@ -27,12 +32,23 @@
         "kind": "workspace",
         "path": "../deckweave/plugins/dev.deckweave.audio.sdPlugin"
       },
-      "controllers": ["Keypad", "Encoder", "Panel"],
-      "platforms": ["windows"],
+      "controllers": [
+        "Keypad",
+        "Encoder",
+        "Panel"
+      ],
+      "platforms": [
+        "windows"
+      ],
       "optional": true,
       "description": "Windows default-output volume, mute and touch control with observed system state. Requires a native helper in distribution archives.",
       "requiredFiles": [
-        { "path": "bin/deckweave-system.exe", "platforms": ["windows"] }
+        {
+          "path": "bin/deckweave-system.exe",
+          "platforms": [
+            "windows"
+          ]
+        }
       ]
     },
     {
@@ -45,8 +61,14 @@
         "kind": "workspace",
         "path": "../deckweave/plugins/dev.deckweave.monitor.sdPlugin"
       },
-      "controllers": ["Keypad", "Encoder", "Panel"],
-      "platforms": ["windows"],
+      "controllers": [
+        "Keypad",
+        "Encoder",
+        "Panel"
+      ],
+      "platforms": [
+        "windows"
+      ],
       "optional": true,
       "description": "Local CPU, memory and uptime widgets. No network requests."
     },
@@ -60,8 +82,14 @@
         "kind": "workspace",
         "path": "../deckweave/plugins/dev.deckweave.timers.sdPlugin"
       },
-      "controllers": ["Keypad", "Encoder", "Panel"],
-      "platforms": ["windows"],
+      "controllers": [
+        "Keypad",
+        "Encoder",
+        "Panel"
+      ],
+      "platforms": [
+        "windows"
+      ],
       "optional": true,
       "description": "Countdown/focus timer and stopwatch with key, dial and native Panel controls."
     },
@@ -72,12 +100,40 @@
       "version": "0.1.0",
       "license": "GPL-3.0-or-later",
       "description": "Development-only two-instance simulated provider. No physical-output claims; not a public release.",
-      "source": { "kind": "workspace", "path": "../plugin-template/examples/dev.deckweave.mock.dwDevice" },
+      "source": {
+        "kind": "workspace",
+        "path": "../plugin-template/examples/dev.deckweave.mock.dwDevice"
+      },
       "deviceProtocol": 1,
       "provisional": true,
-      "models": ["dev.deckweave.mock.mock"],
-      "platforms": ["windows", "macos", "linux"],
+      "models": [
+        "dev.deckweave.mock.mock"
+      ],
+      "platforms": [
+        "windows",
+        "macos",
+        "linux"
+      ],
       "optional": true
+    },
+    {
+      "id": "dev.deckweave.desktop",
+      "type": "action",
+      "name": "Desktop Tools",
+      "version": "0.1.0",
+      "license": "GPL-3.0-or-later",
+      "source": {
+        "kind": "workspace",
+        "path": "../deckweave/plugins/dev.deckweave.desktop.sdPlugin"
+      },
+      "controllers": [
+        "Keypad"
+      ],
+      "platforms": [
+        "windows"
+      ],
+      "optional": true,
+      "description": "Persistent desktop notes, host-owned countdown panels and offline notification sounds. Requires host-services v1; no network or HID access."
     }
   ]
 }
