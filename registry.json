@@ -70,7 +70,15 @@
         "windows"
       ],
       "optional": true,
-      "description": "Local CPU, memory and uptime widgets. No network requests."
+      "description": "Local CPU, RAM, GPU engine, dedicated GPU-memory and uptime widgets. Shared bounded sampling; no network requests.",
+      "requiredFiles": [
+        {
+          "path": "bin/deckweave-system.exe",
+          "platforms": [
+            "windows"
+          ]
+        }
+      ]
     },
     {
       "id": "dev.deckweave.timers",
@@ -134,6 +142,76 @@
       ],
       "optional": true,
       "description": "Persistent desktop notes, host-owned countdown panels and offline notification sounds. Requires host-services v1; no network or HID access."
+    },
+    {
+      "id": "dev.deckweave.clock",
+      "type": "action",
+      "name": "Date & Time",
+      "version": "0.1.0",
+      "license": "GPL-3.0-or-later",
+      "source": {
+        "kind": "workspace",
+        "path": "../deckweave/plugins/dev.deckweave.clock.sdPlugin"
+      },
+      "controllers": [
+        "Keypad",
+        "Panel"
+      ],
+      "platforms": [
+        "windows"
+      ],
+      "optional": true,
+      "description": "Digital time, date and weekday for keys and hardware panels. Offline, explicit time zone."
+    },
+    {
+      "id": "dev.deckweave.focus",
+      "type": "action",
+      "name": "Pomodoro",
+      "version": "0.1.0",
+      "license": "GPL-3.0-or-later",
+      "source": {
+        "kind": "workspace",
+        "path": "../deckweave/plugins/dev.deckweave.focus.sdPlugin"
+      },
+      "controllers": [
+        "Keypad",
+        "Encoder",
+        "Panel"
+      ],
+      "platforms": [
+        "windows"
+      ],
+      "optional": true,
+      "description": "Host-owned shared Pomodoro with work/break phases, persistent pause and transition sounds. No overlay required."
+    },
+    {
+      "id": "dev.deckweave.workspace",
+      "type": "action",
+      "name": "Personal Workspace · Рабочее место",
+      "version": "0.1.0",
+      "license": "GPL-3.0-or-later",
+      "source": {
+        "kind": "workspace",
+        "path": "../deckweave/plugins/dev.deckweave.workspace.sdPlugin"
+      },
+      "controllers": [
+        "Keypad",
+        "Encoder",
+        "Panel"
+      ],
+      "platforms": [
+        "windows"
+      ],
+      "optional": true,
+      "description": "Targeted application controls and local VS Code commands for Typst and Codex. Includes source companion; no prompt submission.",
+      "requiredFiles": [
+        {
+          "path": "bin/deckweave-workspace.exe",
+          "platforms": [
+            "windows"
+          ]
+        }
+      ]
     }
   ]
 }

@@ -1,7 +1,8 @@
 # DeckWeave optional plugin registry
 
-A validated **typed extension** catalogue: Weather, Audio, System Monitor and
-Timers actions, plus a development-only two-instance mock device provider. Current
+A validated **typed extension** catalogue: Weather, Audio, System Monitor, Timers,
+Desktop Tools, Date & Time, Pomodoro and Personal Workspace actions, plus a
+development-only two-instance mock device provider. Current
 entries use sibling source checkouts; no remote releases are invented. Third-party
 Elgato packages and empty icon packs are not redistributed here.
 

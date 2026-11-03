@@ -44,7 +44,9 @@ test("checked-in metadata validates without sibling repositories", async () => {
   );
   assert.deepEqual(metadataErrors(data), []);
   assert.equal(data.schemaVersion, 2);
-  assert.equal(data.plugins.filter((p) => p.type === "action").length, 5);
+  for (const id of ["weather", "audio", "monitor", "timers", "desktop", "clock", "focus", "workspace"]) {
+    assert.ok(data.plugins.some((p) => p.id === `dev.deckweave.${id}` && p.type === "action"), id);
+  }
   assert.equal(data.plugins.filter((p) => p.type === "device").length, 1);
   const audio = data.plugins.find((p) => p.id === "dev.deckweave.audio");
   assert.ok(
